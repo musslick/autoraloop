@@ -20,8 +20,23 @@ class Stroop:
         :param color_w: Weight of the color projections
         :param task_w: Weight of the task projections
         """
+        self.color = pnl.ProcessingMechanism(name="Color", input_shapes=2)
+        self.word = pnl.ProcessingMechanism(name="Word", input_shapes=2)
+        self.response = pnl.ProcessingMechanism(name="Response", input_shapes=2)
 
         self.comp = pnl.Composition(name='Stroop')
+
+        self.comp.add_linear_processing_pathway([
+            self.color,
+            1.0 * np.array([1,1,], [1,1])
+            self.response
+        ])
+
+        self.comp.add_linear_processing_pathway([
+            self.word,
+            3.0 * np.array([1,1,], [1,1])
+            self.response
+        ])
 
     def predict(self, x):
         self.comp.run(x, execution_mode=pnl.ExecutionMode.LLVMRun)
@@ -57,9 +72,9 @@ class Stroop:
 
     def report(self):
         print('Nothing to report yet...')
-        # print('** INPUTS **')
-        # print(f'Word: {self.word.value} ({word_map(list(self.word.value[0]))})')
-        # print(f'Color: {self.color.value} ({color_map(list(self.color.value[0]))})')
+        print('** INPUTS **')
+        print(f'Word: {self.word.value} ({word_map(list(self.word.value[0]))})')
+        print(f'Color: {self.color.value} ({color_map(list(self.color.value[0]))})')
         # print(f'Task: {self.task.value} ({task_map(list(self.task.value[0]))})')
         #
         # print('** Hidden **')
@@ -67,9 +82,9 @@ class Stroop:
         # print(f'Color (hidden): {self.color_hidden.value}')
         # print(f'Task (hidden): {self.task_hidden.value}')
         #
-        # print('** OUTPUTS **')
-        # print(
-        #     f'Output: {self.output.value} ({"red > green" if self.output.value[0][0] > self.output.value[0][1] else "green > red"})')
+        print('** OUTPUTS **')
+        print(
+            f'Output: {self.response.value} ({"red > green" if self.response.value[0][0] > self.response.value[0][1] else "green > red"})')
         #
         # print('** Conflict **')
         # print(f'conflict: {self.conflict.value}')
